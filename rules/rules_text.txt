@@ -1,5 +1,23 @@
 ## 动态规则（版本：2025-05-18-v1）
 
+---
+
+## 输入信息
+
+以下是你需要分析的内容信息：
+
+- **Product_title：视频标题
+- **Comment：视频评论/描述
+- **Audio_transcript：视频语音转录文本
+- **Product_category：产品分类
+- **Product_claim：产品宣称
+- **Product_claim_category：产品宣称分类
+- **Video_frame_descriptions：视频帧描述
+
+请基于以上信息和下方的判定规则进行分析。
+
+---
+
 ### Step 1：前后效果对比（Before and After Comparison）
 - 定义：通过视频画面覆盖、顺序展示或直接展示"使用前 vs 使用后"的效果，对比结果落在受控列表内
 - 受控效果（穷举）：皮肤紧致, 毛发生长, 龋齿消除/逆转
