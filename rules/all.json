@@ -1,0 +1,182 @@
+{
+  "version": "2025-05-18-v1",
+  "last_updated": "2025-05-18",
+  "global": {
+    "fallback_exemptions": [
+      "{{Product_title}}/{{Product_image}} 明确产品为束腰",
+      "视频仅包含基础价格/折扣信息，无任何功效宣称，且符合产品官方定义范围",
+      "{{Comment}} 无具体、明确的效果不符反馈，仅为模糊负面评价",
+      "视频仅存在拍摄角度、光线等非核心差异，不改变产品核心属性与功能宣传范围"
+    ]
+  },
+  "step1": {
+    "before_and_after": {
+      "definition": "通过视频画面覆盖、顺序展示或直接展示\"使用前 vs 使用后\"的效果，对比结果落在受控列表内",
+      "controlled_effects": [
+        "皮肤紧致",
+        "毛发生长",
+        "龋齿消除/逆转"
+      ],
+      "exempted_products": [
+        "美容仪",
+        "面部工具",
+        "彩妆",
+        "假发"
+      ],
+      "disclaimers": {
+        "personal_experience": [
+          "我个人的使用经历",
+          "这是我的个人体验",
+          "based on my own usage",
+          "my personal experience",
+          "个人使用感受"
+        ],
+        "result_may_vary": [
+          "并非人人相同",
+          "结果因人而异",
+          "效果取决于使用方式",
+          "not all will have the same result",
+          "result depends on usage",
+          "result varies for all individuals"
+        ]
+      },
+      "disclaimer_locations": [
+        "视频口播或画面字幕",
+        "视频中可见包装/标签上的文字",
+        "视频描述或话题标签"
+      ]
+    },
+    "digital_effect": {
+      "definition": "使用滤镜、视频剪辑或 AI 特效等数字手段模拟或夸大产品效果，使效果看起来更即时、更夸张",
+      "examples": [
+        "用磨皮、美白滤镜或动态特效，伪装为产品即时见效的结果",
+        "用 AI 特效制造出短时间内不现实的体貌变化或功能表现"
+      ],
+      "no_exemption": true,
+      "uncertainty_guidance": "如果无法确定是否为数字生成效果（例如画质较差、特效不明显），应倾向批准，必须在论证的视频证据层面明确写出：\"不确定是否为数字生成效果，按政策倾向批准。\""
+    }
+  },
+  "step2": {
+    "exaggerated": {
+      "body_transformation": {
+        "definition": "宣称产品能带来只有手术、长期系统治疗或重大生活方式改变才可能实现的身体变化，包含显式或隐式表述",
+        "controlled_list": [
+          "乳房增大",
+          "生殖器增大",
+          "\"创造或增加\"生殖器湿润（如\"让你变得很湿\"\"像瀑布/喷泉\"等隐喻）",
+          "性能力夸大：明显延长时间、更强性耐力、更高性欲、显著提升唤醒/高潮/满意度等"
+        ],
+        "no_exemption": true
+      },
+      "timed_outcome": {
+        "definition": "针对人体宣称在极短时间内产生明显效果",
+        "time_expressions": [
+          "立即",
+          "X秒",
+          "X分钟",
+          "X小时",
+          "X天",
+          "X周"
+        ],
+        "exempted_products": [
+          "美容仪",
+          "面部工具",
+          "彩妆",
+          "假发"
+        ],
+        "ai_instant_result_exemption": "AI 生成的即时结果不纳入时效承诺控制"
+      },
+      "unrealistic_function": {
+        "definition": "宣称产品功能超出其物理或机械极限，且与人体效果无关",
+        "controlled_list": [
+          "手电筒能点火、烧物",
+          "牙膏能像工业漂白剂一样漂白衣物、瓷砖等",
+          "充电器能瞬间将设备充满电",
+          "电风扇能迅速制冰或直接充当空调使用"
+        ],
+        "no_exemption": true
+      }
+    },
+    "wellness": {
+      "definition": "当\"宣称效果\"词语与\"健康状态\"词语组合出现时，即构成健康宣称违规",
+      "prevention_effects": [
+        "anti- 某疾病",
+        "避免某疾病",
+        "提高免疫力",
+        "减小风险",
+        "保护/防护",
+        "不会得某疾病",
+        "预防",
+        "mitigate",
+        "avoid",
+        "prevent",
+        "protect from",
+        "reduce risk"
+      ],
+      "cure_effects": [
+        "治愈",
+        "消除",
+        "修复",
+        "摆脱",
+        "痊愈",
+        "没问题了",
+        "不再复发",
+        "恢复",
+        "去除",
+        "解决",
+        "阻止某疾病",
+        "cure",
+        "eliminate",
+        "fix",
+        "get rid of",
+        "heal",
+        "no more",
+        "recover from",
+        "remove",
+        "resolve",
+        "stop"
+      ],
+      "conditions": {
+        "physical": [
+          "贫血",
+          "关节炎",
+          "哮喘",
+          "COVID-19",
+          "高血压",
+          "低血压",
+          "PCOS",
+          "银屑病",
+          "脂溢性皮炎",
+          "尿路感染（UTI）"
+        ],
+        "mental": [
+          "多动症（ADHD）",
+          "双相情感障碍"
+        ],
+        "emotional": [
+          "抑郁"
+        ]
+      },
+      "exempted_products": [
+        "指南类书籍（非疗愈/偏方书，仅为信息/教育用途）",
+        "监测设备（血压计、新冠检测试剂盒、血糖仪、体温计等）"
+      ]
+    },
+    "scientific": {
+      "definition": "宣称产品可以通过超自然或未被证实的方式操控他人的思想、情感或行为，明显违背科学常识",
+      "examples": [
+        "让他人立刻爱上你、迷恋你、服从你的命令",
+        "让某人不停想你、瞬间完全信任你"
+      ],
+      "no_exemption": true
+    }
+  },
+  "step3": {
+    "listing_verification": "内容中的相关宣称，是否能在商品 Listing（{{Product_title}}商品名称、商品描述、{{Product_image}}商品图片）中找到完全对应的合规依据",
+    "packaging_verification": "内容中的相关宣称，是否能在视频画面里展示的商品包装/标签上找到完全对应的合规依据"
+  },
+  "conflict_rules": [
+    "若同一条内容同时命中多个违规场景，其中某一场景因免责声明或豁免产品而不再构成违规，仍需根据其他仍然成立的违规场景执行对应流程判定",
+    "对于\"数字生成特效\"\"非现实产品功能\"\"违背科学理论\"三个场景，一旦确认命中，即不接受任何免责声明或豁免"
+  ]
+}

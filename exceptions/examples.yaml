@@ -1,0 +1,42 @@
+# 例外案例库 - 用于积累历史误判案例
+# 每次发现模型判断错误的案例，添加到这里
+
+- case_id: EX001
+  scenario: timed_outcome
+  title: "时效承诺 + 个人体验免责声明"
+  content: "视频宣称产品2小时见效，同时口播提到'这是我个人的使用体验'"
+  expected: 无误导
+  reason: "个人体验免责声明豁免时效承诺违规"
+  added_date: 2025-05-18
+
+- case_id: EX002
+  scenario: digital_effect
+  title: "AI生成的即时效果"
+  content: "视频中展示了AI生成的即时效果视觉"
+  expected: 无误导
+  reason: "AI生成的即时结果不纳入时效承诺控制范围"
+  added_date: 2025-05-18
+
+- case_id: EX003
+  scenario: before_and_after
+  title: "彩妆产品的前后对比"
+  content: "视频展示了彩妆产品的使用前后对比"
+  expected: 无误导
+  reason: "彩妆属于豁免产品列表"
+  added_date: 2025-05-18
+
+- case_id: EX004
+  scenario: wellness
+  title: "帮助/支持不是宣称效果"
+  content: "视频提到产品'帮助改善'某健康状况"
+  expected: 无误导
+  reason: "'帮助/支持'不属于预防或治愈类宣称效果"
+  added_date: 2025-05-18
+
+- case_id: EX005
+  scenario: exaggerated
+  title: "生殖器湿润 vs 生殖器保湿"
+  content: "视频宣称产品可以'保湿'男性私密部位"
+  expected: 无误导
+  reason: "只有'创造或增加'生殖器湿润才受控，'保湿'不属于违规"
+  added_date: 2025-05-18
