@@ -6,15 +6,23 @@
 
 以下是你需要分析的内容信息：
 
-- **Product_title：视频标题
-- **Comment：视频评论/描述
-- **Audio_transcript：视频语音转录文本
-- **Product_category：产品分类
-- **Product_claim：产品宣称
-- **Product_claim_category：产品宣称分类
-- **Video_frame_descriptions：视频帧描述
+### 文本信息
 
-请基于以上信息和下方的判定规则进行分析。
+| 字段 | 说明 |
+|------|------|
+| ASR | 视频语音转文本 |
+| OCR | 视频画面中识别出的文字 |
+| Comment | 视频评论/描述 |
+| Product_title | 产品标题 |
+
+### 图片信息（视觉理解）
+
+| 字段 | 说明 |
+|------|------|
+| URL_Frames | 视频帧图片URL（多张） |
+| Product_image | 产品主图URL |
+
+请综合分析文本信息和图片信息，结合下方的判定规则进行判断。
 
 ---
 
