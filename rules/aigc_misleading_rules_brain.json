@@ -1,11 +1,12 @@
 {
-  "version": "2026-07-14-v1",
+  "version": "2026-07-23-v2",
   "name": "AIGC_Misleading Rules Brain",
-  "last_updated": "2026-07-14",
+  "last_updated": "2026-07-23",
   "intended_use": "Aicolate HTTP Request can fetch this file as the dynamic rule source for a Rules_Brain code node or as a fallback full rulebook body.",
   "input_contract": {
-    "all_image_urls": "Array of image URLs. all_image_urls[0] must be the product reference image. all_image_urls[1+] must be sampled video frames in timestamp order.",
-    "frame_image_urls": "Array of sampled video frame URLs in timestamp order.",
+    "all_image_urls": "Array of image URLs. Current Aicolate workflow puts ordered Second video frames first, followed by Product Reference images.",
+    "all_image_debug_table": "Authoritative image index table. Use IMAGE_INDEX plus Second/Product Reference labels from this table rather than assuming a fixed numeric offset.",
+    "frame_image_urls": "Array of ordered second-level video frame URLs in timestamp order when provided separately.",
     "product_image_url": "First product image URL, used as the visual ground truth for product appearance and size.",
     "asr_text": "Video speech transcript. Use for verbal claims, medical claims, absolute claims, and fake endorsement claims.",
     "ocr_text": "Optional video OCR text. Use together with ASR for textual claims.",
@@ -23,7 +24,7 @@
     ],
     "signal_to_rule_map": [
       {
-        "signal": "visual anomaly, generated artifact, deformed object/body, impossible physics, fake visual effect",
+        "signal": "visual anomaly, generated artifact, deformed object/body, impossible physics, fake visual effect, apparel/packaging/fabric print changes motif category across adjacent frames",
         "include_dimensions": [
           "A_AIGC_HALLUCINATION"
         ]
@@ -56,12 +57,13 @@
     ]
   },
   "tagged_rule_blocks": {
-    "A_HALLUCINATION:EMISSION_ARTIFACT": "[RULE:A_HALLUCINATION:EMISSION_ARTIFACT]\nAbnormal product emission / smoke / mist / vapor rule:\n\nVisible smoke, white vapor, mist, fog, spray, glow, sparks, flame, liquid, or other emission from a product can be an AIGC hallucination or misleading visual effect when it is physically inconsistent with the product.\n\nBefore marking a hit, first check product metadata, Product Reference images, ASR, and OCR.\n\nHit when:\n1. The product is not designed to emit smoke, mist, vapor, spray, flame, sparks, liquid, or glow, but the video shows such emission.\n2. The emission appears from the wrong product part or a physically impossible position.\n3. The emission is detached from the outlet, floats unnaturally, changes shape unnaturally, or contradicts the product structure.\n4. The emission is used as a generated visual effect to imply an impossible product effect.\n5. A single ordered frame clearly shows high-severity abnormal emission or physical impossibility.\n\nDo not hit solely because smoke/mist/vapor is visible when:\n1. Product title or clean product description explicitly supports humidifier, mist, spray, evaporative cooling, water tank, diffuser, air cooler, dehumidifier, or similar emission/cooling-water function.\n2. Product Reference images visibly show mist/spray/humidifier function, water tank, fill-water instruction, mist outlet, or emitted mist.\n3. ASR/OCR explicitly describes a supported mist/spray/humidifier/evaporative function.\n\nDo not infer humidifier/mist/spray function from the video effect alone. It must be supported by product metadata, Product Reference, ASR, or OCR.\n[/RULE]"
+    "A_HALLUCINATION:EMISSION_ARTIFACT": "[RULE:A_HALLUCINATION:EMISSION_ARTIFACT]\nAbnormal product emission / smoke / mist / vapor rule:\n\nVisible smoke, white vapor, mist, fog, spray, glow, sparks, flame, liquid, or other emission from a product can be an AIGC hallucination or misleading visual effect when it is physically inconsistent with the product.\n\nBefore marking a hit, first check product metadata, Product Reference images, ASR, and OCR.\n\nHit when:\n1. The product is not designed to emit smoke, mist, vapor, spray, flame, sparks, liquid, or glow, but the video shows such emission.\n2. The emission appears from the wrong product part or a physically impossible position.\n3. The emission is detached from the outlet, floats unnaturally, changes shape unnaturally, or contradicts the product structure.\n4. The emission is used as a generated visual effect to imply an impossible product effect.\n5. A single ordered frame clearly shows high-severity abnormal emission or physical impossibility.\n\nDo not hit solely because smoke/mist/vapor is visible when:\n1. Product title or clean product description explicitly supports humidifier, mist, spray, evaporative cooling, water tank, diffuser, air cooler, dehumidifier, or similar emission/cooling-water function.\n2. Product Reference images visibly show mist/spray/humidifier function, water tank, fill-water instruction, mist outlet, or emitted mist.\n3. ASR/OCR explicitly describes a supported mist/spray/humidifier/evaporative function.\n\nDo not infer humidifier/mist/spray function from the video effect alone. It must be supported by product metadata, Product Reference, ASR, or OCR.\n[/RULE]",
+    "A_HALLUCINATION:PATTERN_IDENTITY_DRIFT": "[RULE:A_HALLUCINATION:PATTERN_IDENTITY_DRIFT]\nProduct surface pattern / motif identity drift rule:\n\nFor apparel, packaging, fabric, bedding, stickers, printed products, or any product with fixed surface patterns, check whether the same product area keeps the same core surface pattern identity across adjacent or nearby ordered Second frames.\n\nHit when:\n1. The same product or same fabric/package area changes core pattern category across adjacent or nearby frames, such as bow print becoming heart / dot / flower / text, one logo becoming another logo, or stripe / animal / letter patterns becoming unrelated motifs.\n2. Product Reference, earlier video frames, product title, or clean product description establish one main pattern, but a later frame shows an unsupported different pattern on the same product area.\n3. The pattern change happens during one continuous action, such as stretching, turning, moving closer to the camera, or a small angle change, with no clear switch to another item.\n4. Stretching, wrinkles, perspective, and occlusion may change pattern spacing, orientation, size, or visibility, but they do not explain a core motif-category replacement.\n5. A global summary that the garment or product is consistent is not enough. Inspect local pattern continuity on the actually visible abnormal area.\n\nDo not hit when:\n1. Product Reference, product title, or clean product description clearly shows that the product intentionally has mixed, patchwork, random, or multi-motif patterns.\n2. The video clearly switches to another item with a different color, pattern, or style.\n3. Product Reference proves both motifs are part of the original design.\n4. The pattern is too blurry, occluded, wrinkled, or motion-blurred to confirm. In that case, do not make a high-confidence A hit.\n\nMissed-case anchor:\nIf the same plus-size pajama shorts are mostly bow print in Second 006, but the pulled-left fabric area becomes heart / dot motifs in Second 007, this is not normal stretch. It is A_hallucination product surface pattern identity drift.\n[/RULE]"
   },
   "image_index_mapping": {
-    "all_image_urls_0": "Product reference image. Treat it as the ground truth for product appearance and approximate product scale.",
-    "all_image_urls_1_plus": "Sampled video frames in timestamp order. Check every frame, not only the first frame.",
-    "critical_instruction": "Do not compare the video only against itself. Product first image is the reference for product appearance and size."
+    "current_order": "Current workflow order is ordered Second video frames first, then Product Reference images.",
+    "all_image_debug_table": "Authoritative source for IMAGE_INDEX, Second labels, Product Reference labels, image type, and URL.",
+    "critical_instruction": "Do not assume all_image_urls[0] is Product Reference. Use all_image_debug_table or all_image_url_queue to identify Second frames and Product Reference images."
   },
   "dimensions": {
     "A_AIGC_HALLUCINATION": {
@@ -70,6 +72,7 @@
       "hit_conditions": [
         "Extra or missing fingers, abnormal limbs, deformed face/body, impossible anatomy.",
         "Object fusion, melted product shape, inconsistent product structure, impossible material behavior.",
+        "Product surface pattern identity drift: the same garment, package, fabric, or printed product changes core motif category across adjacent or nearby frames.",
         "Garbled AIGC text when text is part of the product, label, package, safety information, claim, or instruction.",
         "Physics violations such as floating objects with no support, water flowing upward, fire burning underwater, impossible shadows, contradictory lighting.",
         "Generated visual effects presented as real product results, such as instant transformation, impossible cleaning, impossible beauty result, or fake functional demonstration."
@@ -78,11 +81,14 @@
         "Ordinary lighting, angle, compression, blur, or camera exposure differences.",
         "Creative or obviously metaphorical effects that are not presented as actual product capability.",
         "Garbled background text that is not part of the product, claim, label, package, or key evidence.",
+        "Normal apparel stretch, wrinkles, perspective, or occlusion that only changes motif spacing, orientation, size, or partial visibility without replacing the motif category.",
+        "Mixed, patchwork, random, or multi-motif products when Product Reference, product title, or clean product description supports the mixed design.",
         "Borderline visual uncertainty without concrete frame evidence."
       ],
       "evidence_required": [
         "Name the affected frame index or frame range.",
         "Describe the exact visible anomaly.",
+        "For surface pattern drift, compare adjacent or nearby Second labels and describe the before/after motif categories on the same product area.",
         "Explain why it is not ordinary camera/lighting/perspective variation."
       ]
     },
@@ -199,6 +205,11 @@
       "id": "FP-07",
       "name": "Unsupported speculation",
       "rule": "Do not infer a violation without concrete visual frame evidence, exact ASR/OCR claim, product-listing conflict, or consistent comment evidence."
+    },
+    {
+      "id": "FP-08",
+      "name": "Normal stretch versus motif replacement",
+      "rule": "For apparel and fabric, normal stretch can change pattern spacing, shape, direction, or visibility. It does not explain a core motif-category replacement such as bow print becoming heart or dot motifs on the same fabric area."
     }
   ],
   "juror_profiles": {
@@ -207,7 +218,7 @@
         "A_AIGC_HALLUCINATION",
         "D_SIZE_HALLUCINATION"
       ],
-      "instruction": "Inspect all frames for visual artifacts, physics violations, product deformation, and size mismatch against all_image_urls[0]."
+      "instruction": "Inspect all frames for visual artifacts, physics violations, product deformation, product surface pattern identity drift, and size mismatch. Use all_image_debug_table or all_image_url_queue to identify Product Reference images; do not assume all_image_urls[0] is Product Reference."
     },
     "juror_2_claims_policy": {
       "focus": [
