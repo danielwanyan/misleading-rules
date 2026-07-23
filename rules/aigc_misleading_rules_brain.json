@@ -1,5 +1,5 @@
 {
-  "version": "2026-07-23-v2",
+  "version": "2026-07-23-v3",
   "name": "AIGC_Misleading Rules Brain",
   "last_updated": "2026-07-23",
   "intended_use": "Aicolate HTTP Request can fetch this file as the dynamic rule source for a Rules_Brain code node or as a fallback full rulebook body.",
@@ -121,18 +121,23 @@
         "Medical or wellness cure/prevention claims without evidence: cures disease, removes toxins, cleans blood vessels, treats cancer, fixes chronic illness.",
         "Fake expert or authority claims: doctor recommended, expert certified, clinically proven, official certification, when no evidence is shown.",
         "Fake data/ranking claims: world's best, #1 seller, 99% effective, scientifically proven, when no verifiable support is shown.",
-        "ASR/OCR claim conflicts with product title, product image, or product description."
+        "ASR/OCR claim conflicts with product title, product image, or product description.",
+        "Quantity or set claims are false only when clear evidence contradicts the claimed quantity, such as product title, clean product description, listing metadata, package/count evidence, ordered video frames, or comments."
       ],
       "non_hit_conditions": [
         "Generic subjective praise without a concrete factual claim.",
         "Clearly visible legitimate certification or listing support for a specific claim.",
         "ASR/OCR is too garbled to quote reliably and visual evidence does not support the claim.",
-        "Claims framed clearly as personal preference without guaranteed or medical wording."
+        "Claims framed clearly as personal preference without guaranteed or medical wording.",
+        "Do not mark quantity or set claims such as three pairs in one set, 2-pack, 3-piece set, bundle, or set of X as false solely because Product Reference shows one item. Product Reference may be representative and may not show every item in a bundle.",
+        "If ordered video frames show multiple colors/items consistent with the quantity or set claim, treat the claim as supported or unresolved, not high-confidence false."
       ],
       "evidence_required": [
         "Quote the exact ASR/OCR phrase when possible.",
         "Classify the claim type: absolute, medical, expert, endorsement, fake_data, ranking, or listing_conflict.",
-        "Explain why the claim is unsupported or conflicts with available evidence."
+        "Explain why the claim is unsupported or conflicts with available evidence.",
+        "For quantity/set claims, check product title, clean description, ordered video frames, package/count evidence, listing metadata, Product Reference, and comments before marking false.",
+        "A single Product Reference image showing one item is not enough contradiction for a quantity/set claim."
       ]
     },
     "D_SIZE_HALLUCINATION": {
@@ -210,6 +215,11 @@
       "id": "FP-08",
       "name": "Normal stretch versus motif replacement",
       "rule": "For apparel and fabric, normal stretch can change pattern spacing, shape, direction, or visibility. It does not explain a core motif-category replacement such as bow print becoming heart or dot motifs on the same fabric area."
+    },
+    {
+      "id": "FP-09",
+      "name": "Quantity and set representative image",
+      "rule": "Do not mark quantity or set claims such as three pairs in one set, 2-pack, 3-piece set, bundle, or set of X as false solely because Product Reference shows one item. Product Reference may be representative. Require explicit contradiction from product title, clean description, listing metadata, package/count evidence, ordered video frames, or comments. If video frames show multiple items/colors consistent with the claim, treat it as supported or unresolved, not high-confidence false."
     }
   ],
   "juror_profiles": {
