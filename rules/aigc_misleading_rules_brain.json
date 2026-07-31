@@ -7,6 +7,8 @@
     "all_image_urls": "Array of image URLs. Current Aicolate workflow puts ordered Second video frames first, followed by Product Reference images.",
     "all_image_debug_table": "Authoritative image index table. Use IMAGE_INDEX plus Second/Product Reference labels from this table rather than assuming a fixed numeric offset.",
     "frame_image_urls": "Array of ordered second-level video frame URLs in timestamp order when provided separately.",
+    "video_frame_status": "Frame extraction status from All Frame Code. If it is missing_video_frames, downstream visual review must return missing_required_visual_data instead of applying rule examples.",
+    "video_frame_count": "Number of ordered video frames. If it is 0, downstream visual review must return missing_required_visual_data instead of analyzing A/B/D visual dimensions.",
     "product_image_url": "First product image URL, used as the visual ground truth for product appearance and size.",
     "asr_text": "Video speech transcript. Use for verbal claims, medical claims, absolute claims, and fake endorsement claims.",
     "ocr_text": "Optional video OCR text. Use together with ASR for textual claims.",
@@ -55,6 +57,22 @@
       "verdict_mapping",
       "output_schema"
     ]
+  },
+  "data_availability_guard": {
+    "principle": "rules_context contains policy rules and examples only. It is not sample evidence.",
+    "critical_instructions": [
+      "Do not treat rule examples, schema examples, or missed-case anchors as sample evidence.",
+      "Before any visual judgment, verify that real sample visual data is present: all_image_urls contains at least one ordered video frame, all_image_debug_table contains at least one Second / VIDEO_FRAME row, video_frame_status is not missing_video_frames, and video_frame_count is greater than 0.",
+      "If required visual data is missing, empty, unresolved, or only Product Reference images are present, do not infer A_hallucination, B_exaggeration, or D_size_hallucination from rules_context, examples, comments, or memory.",
+      "If ASR/OCR/comments are also empty or not clearly tied to the current sample, do not infer C_false_claims.",
+      "When required sample evidence is missing, return missing_required_visual_data. Do not return bottomline_misleading, low_quality_misleading, or no_issue."
+    ],
+    "missing_data_output": {
+      "final_decision": "无法分析-缺少RPC数据",
+      "data_status": "missing_required_visual_data",
+      "dimension_policy": "Set every dimension hit to false and explain in Chinese that required RPC video-frame data or image index data is missing.",
+      "final_reason": "当前样本缺少RPC返回的视频帧或all_image_debug_table，无法验证任何Second帧、Product Reference或视觉异常证据。规则上下文中的示例不能作为当前视频证据，因此不做AIGC Misleading裁决。"
+    }
   },
   "tagged_rule_blocks": {
     "A_HALLUCINATION:EMISSION_ARTIFACT": "[RULE:A_HALLUCINATION:EMISSION_ARTIFACT]\nAbnormal product emission / smoke / mist / vapor rule:\n\nVisible smoke, white vapor, mist, fog, spray, glow, sparks, flame, liquid, or other emission from a product can be an AIGC hallucination or misleading visual effect when it is physically inconsistent with the product.\n\nBefore marking a hit, first check product metadata, Product Reference images, ASR, and OCR.\n\nHit when:\n1. The product is not designed to emit smoke, mist, vapor, spray, flame, sparks, liquid, or glow, but the video shows such emission.\n2. The emission appears from the wrong product part or a physically impossible position.\n3. The emission is detached from the outlet, floats unnaturally, changes shape unnaturally, or contradicts the product structure.\n4. The emission is used as a generated visual effect to imply an impossible product effect.\n5. A single ordered frame clearly shows high-severity abnormal emission or physical impossibility.\n\nDo not hit solely because smoke/mist/vapor is visible when:\n1. Product title or clean product description explicitly supports humidifier, mist, spray, evaporative cooling, water tank, diffuser, air cooler, dehumidifier, or similar emission/cooling-water function. This supports only reasonable mist / airflow; it does not automatically exempt all smoke, vapor, cold-air, particle, glow, or VFX-like effects.\n2. Product Reference images visibly show mist/spray/humidifier function, water tank, fill-water instruction, mist outlet, or emitted mist. This supports reasonable function demonstration only; it does not support dense opaque fog, strong cold-air beams, blue particle light effects, or physically inconsistent emission beyond device capability.\n3. ASR/OCR explicitly describes a supported mist/spray/humidifier/evaporative function. Still check whether the visual effect is physically reasonable for this product category and device size.\n\nDo not infer humidifier/mist/spray function from the video effect alone. It must be supported by product metadata, Product Reference, ASR, or OCR.\nAlso do not automatically exempt all mist/smoke/cold-air/particle/glow effects merely because the product supports mist, humidification, spray, or evaporative cooling. Small fans, desktop coolers, USB evaporative coolers, and portable air coolers usually produce light, local, naturally diffusing mist or moist airflow from a reasonable outlet. Dense opaque fog, broad horizontal smoke-like plumes, blue particle beams, detached emission, VFX-like particles, or air-conditioner-level cooling visuals should still be evaluated as A_hallucination and/or B_exaggeration.\n[/RULE]",
@@ -377,16 +395,19 @@
     "verdict_mapping": {
       "bottomline_misleading": "Any dimension has high-confidence hit.",
       "low_quality_misleading": "No high-confidence hit, but at least one medium-confidence hit.",
-      "no_issue": "No dimension has high or medium hit."
+      "no_issue": "No dimension has high or medium hit and required sample data is available.",
+      "missing_required_visual_data": "Required RPC video-frame data or image-index data is missing. Return 无法分析-缺少RPC数据 instead of making a misleading/no-issue verdict."
     },
     "allowed_final_labels": [
       "底线-夸大宣传",
       "低质-夸大宣传",
-      "无问题"
+      "无问题",
+      "无法分析-缺少RPC数据"
     ]
   },
   "output_schema": {
-    "overall_verdict": "底线-夸大宣传|低质-夸大宣传|无问题",
+    "overall_verdict": "底线-夸大宣传|低质-夸大宣传|无问题|无法分析-缺少RPC数据",
+    "data_status": "available|missing_required_visual_data",
     "dimension_results": {
       "A": {
         "hit": "boolean",
